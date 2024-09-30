@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
     //DocumentParser::cleanDocument(doc);
 
     // Perform TextRank and get ranks
-    std::vector<int> ranks = textRank(similarityMatrix, numSentences, 0.85);
+    std::vector<int> ranks = textRank(similarityMatrix, 100, 0.85);
 
     // Output the top ranked sentences
     for (int i = 0; i < numSentences && i < ranks.size(); i++) {
