@@ -9,7 +9,7 @@
 #include "Constants.h"
 
 
-#define MIN_THRESHOLD 0.0000001
+#define MIN_THRESHOLD 0.00001
 
 double cosine_similarity(const std::vector<double> &A, const std::vector<double> &B) {
     double dot_product = 0.0, normA = 0.0, normB = 0.0;
@@ -21,11 +21,13 @@ double cosine_similarity(const std::vector<double> &A, const std::vector<double>
     return dot_product / (sqrt(normA) * sqrt(normB));
 }
 
-
 SimilarityMatrix generateSimilarityMatrix(const SentenceEmbeddingList &embeddings) {
     size_t N = embeddings.size();
     SimilarityMatrix similarityMatrix(N, std::vector<double>(N, 0.0));
+
     for (size_t i = 0; i < N; i++) {
+        std::cout << "Calculating similarity for sentence " << i + 1 << " of " << N << std::endl;
+
         for (size_t j = i + 1; j < N; j++) {
             similarityMatrix[i][j] = cosine_similarity(embeddings[i], embeddings[j]);
             similarityMatrix[j][i] = similarityMatrix[i][j];
@@ -38,38 +40,37 @@ SimilarityMatrix generateSimilarityMatrix(const SentenceEmbeddingList &embedding
 }
 
 
-
-std::vector<int> textRank(const SimilarityMatrix& similarityMatrix, int maxIter, double d) {
+std::vector<int> textRank(const SimilarityMatrix &similarityMatrix, int maxIter, double d) {
     size_t n = similarityMatrix.size();
     std::vector<double> scores(n, 1.0);
     std::vector<double> tempScores(n, 0.0);
+    std::vector<double> similaritySums(n, 0.0);
+    for (size_t j = 0; j < n; ++j) {
+        similaritySums[j] = std::accumulate(similarityMatrix[j].begin(),
+                                            similarityMatrix[j].end(), 0.0);
+    }
     for (int iter = 0; iter < maxIter; ++iter) {
+        //std::cout << "Iteration: " << iter + 1 << std::endl;
         bool converged = true;
         for (size_t i = 0; i < n; ++i) {
             tempScores[i] = (1 - d);
             for (size_t j = 0; j < n; ++j) {
-                if (i != j) {
-                    double similaritySum = std::accumulate(similarityMatrix[j].begin(),
-                                                           similarityMatrix[j].end(),
-                                                           0.0);
-                    if (similaritySum > 0) {
-                        tempScores[i] += d * (similarityMatrix[j][i] / similaritySum) * scores[j];
-                    }
+                if (i != j && similaritySums[j] > 0) {
+                    tempScores[i] += d * (similarityMatrix[j][i] / similaritySums[j]) * scores[j];
                 }
             }
-
             // Check for convergence
             if (std::fabs(tempScores[i] - scores[i]) > MIN_THRESHOLD) {
                 converged = false; // If any score changes beyond the threshold, mark as not converged
             }
         }
-
         scores = tempScores;
 
         if (converged) {
             break;
         }
     }
+
     std::vector<int> ranks(n);
     for (int i = 0; i < n; ++i) {
         ranks[i] = i;
@@ -100,7 +101,8 @@ std::string writeToFile(const std::string &filePath, const std::string &text) {
     return filePath;
 }
 
-int main(int argc, char* argv[]) {
+
+int main(int argc, char *argv[]) {
     if (argc != 4) {
         std::cerr << "Usage: " << argv[0] << " <input_file> <output_file> <number_of_sentences>" << std::endl;
         return 1;
@@ -114,7 +116,7 @@ int main(int argc, char* argv[]) {
         if (numSentences <= 0) {
             throw std::invalid_argument("Number of sentences must be positive.");
         }
-    } catch (const std::invalid_argument&) {
+    } catch (const std::invalid_argument &) {
         std::cerr << "Error: The number of sentences must be a valid integer." << std::endl;
         return 1;
     }
@@ -133,10 +135,9 @@ int main(int argc, char* argv[]) {
 
     // Split document into sentences for ranking
     Document doc = DocumentParser::splitToSentences(text);
-    //DocumentParser::cleanDocument(doc);
 
     // Perform TextRank and get ranks
-    std::vector<int> ranks = textRank(similarityMatrix, numSentences, 0.85);
+    std::vector<int> ranks = textRank(similarityMatrix, 100, 0.85);
 
     // Output the top ranked sentences
     for (int i = 0; i < numSentences && i < ranks.size(); i++) {
