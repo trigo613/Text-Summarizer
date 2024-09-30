@@ -146,7 +146,7 @@ int main(int argc, char* argv[]) {
     // Prepare summary to write to output file
     std::string summary;
     for (size_t i = 0; i < numSentences && i < ranks.size(); i++) {
-        summary += "Rank: " + std::to_string(i + 1) + ", Sentence: " + doc[ranks[i]] + "\n";
+        summary += doc[ranks[i]] + "\n\n";
     }
 
     // Write summary to output file
