@@ -86,8 +86,7 @@ std::string readFromFile(const std::string &filePath) {
     std::ifstream file(filePath);
     std::string text;
     std::string line;
-    int k = 0;
-    while (std::getline(file, line) && k++ < 2000) {
+    while (std::getline(file, line)) {
         text += line + " ";
     }
     file.close();
