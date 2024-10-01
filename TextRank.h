@@ -19,7 +19,7 @@ namespace TextRank {
 
     std::vector<int> textRank(const SimilarityMatrix &similarityMatrix, int maxIter, double d);
 
-    double cosine_similarity(const SparseVector &a, const SparseVector &b);
+    double cosine_similarity(SparseVector a, SparseVector b);
 };
 
 

@@ -18,12 +18,12 @@ double SparseVector::operator[](int index) const {
     return data.at(index);
 }
 
-double SparseVector::norm() const {
+double SparseVector::norm() const{
     double sum = 0;
     for (const auto& pair : data) {
         sum += pair.second * pair.second;
     }
-    return sqrt(sum);
+    return std::sqrt(sum);
 }
 
 double dot(const SparseVector &a, const SparseVector &b) {
@@ -49,7 +49,7 @@ int SparseVector::size() const {
 
 
 void SparseVector::insert(int index, double value) {
-    if (value != 0) {
+    if (value != default_value) {
         data[index] = value;
     }
 }
