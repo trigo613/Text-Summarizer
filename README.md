@@ -1,6 +1,6 @@
 # TF-IDF TextRank Summarizer
 
-This C++ project implements a text summarization tool using TF-IDF (Term Frequency-Inverse Document Frequency) embeddings and the TextRank algorithm. It extracts the most important sentences from a given text file based on their significance within the document.
+This C++ project implements a text summarization tool using TF-IDF (Term Frequency-Inverse StringVector Frequency) embeddings and the TextRank algorithm. It extracts the most important sentences from a given text file based on their significance within the document.
 For more details, refer to the [original paper](https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf).
 
 
