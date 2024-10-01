@@ -12,29 +12,32 @@
 #include <fstream>
 #include <regex>
 #include "Constants.h"
+#include <string>
+#include <regex>
 
-class DocumentParser {
-    static Sentence splitString(const std::string& s,char delim,bool erase_extras = true);
+namespace DocumentParser {
 
-    static Sentence splitSentenceToWords(const std::string& sentence,bool erase_extras = true);
-    static void trimString(std::string &s);
+     StringVector splitString(const std::string& s, char delim, bool clean_string = true);
 
-    static std::unordered_set<std::string> loadWordsWithPeriods(const std::string& file_path);
+     StringVector splitSentenceToWords(const std::string& sentence, bool clean_string = true);
 
-public:
-    static SentenceList splitDocumentToSentences(const std::string& document,bool erase_extras = true);
+     void keepAlphanumericOnly(std::string &s);
 
-    static Document splitToSentences(const std::string& document);
+     void replaceNumbersWithString(std::string &s);
 
-    static std::string removePeriodFromWords(const std::string &text);
+     std::unordered_set<std::string> loadWordsWithPeriods(const std::string& file_path);
 
-    static std::string removeWordsWithDots(const std::string &text);
+     StringVector splitToSentences(const std::string& document, bool clean_string = true);
 
-    static void cleanDocument(Document &d);
+     std::string removeWordsWithPeriods(const std::string &text);
 
-    static void removeNonStandardChars(std::string &text);
+     StringVector cleanDocument(const StringVector &d);
 
-    static void replaceConsecutiveWhitespaces(std::string &text);
+    std::string removeNonStandardChars(const std::string &text);
+
+    std::string replaceConsecutiveWhitespaces(const std::string &text);
+
+    SentenceList splitSentencesToWords(const StringVector& document, bool clean_string);
 };
 
 

@@ -8,22 +8,25 @@
 #include <vector>
 #include <string>
 #include <map>
+#include "SparseVector.h"
+
+#define MIN_THRESHOLD 0.00001
 
 typedef std::vector<std::vector<double>> SimilarityMatrix;
 
-typedef std::vector<std::string> Document;
+typedef std::vector<std::string> StringVector;
 
-typedef std::vector<std::string> Sentence;
+typedef std::vector<StringVector> SentenceList;
 
-typedef std::vector<Sentence> SentenceList;
-
-typedef std::vector<double> SentenceEmbedding;
+typedef SparseVector SentenceEmbedding;
 
 typedef std::vector<SentenceEmbedding> SentenceEmbeddingList;
 
 typedef std::map<std::string,std::vector<int>> WordFrequencyCounter;
 
 typedef std::map<std::string,int> WordToInt;
+
+typedef std::map<std::string,int> IntToWord;
 
 typedef std::vector<double> Idf;
 

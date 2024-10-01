@@ -11,22 +11,30 @@
 #include <numeric>
 
 class TfIdf {
-    static SentenceEmbeddingList
-    generateCountVectors(const SentenceList &sentences, const WordFrequencyCounter &word_freq_counter,
-                         const WordToInt &word_to_index);
 
-    static WordFrequencyCounter generateDocumentWordCountMap(const SentenceList &sentences);
+private:
+    WordFrequencyCounter word_freq_counter;
+    WordToInt word_to_index;
+    IntToWord index_to_word;
+    Idf idf;
+    size_t num_sentences;
+    size_t embedding_size;
 
-    static WordToInt generateWordToIndex(const WordFrequencyCounter& word_freq_counter);
+    SentenceEmbeddingList generateCountVectors(const SentenceList &sentences);
 
-    static SentenceEmbeddingList normalizeCountVectors(SentenceEmbeddingList &embedding_list);
+    void generateDocumentWordCountMap(const SentenceList &sentences);
 
-    static Idf generateIdf(const SentenceEmbeddingList &wordCounts);
+    void generateWordToIndex();
+
+    SentenceEmbeddingList normalizeCountVectors(SentenceEmbeddingList &embedding_list);
+
+    void generateIdf();
+
 public:
 
+    void fit(const SentenceList &sentences);
 
-    static SentenceEmbeddingList generateEmbeddings(const SentenceList &sentences);
-
+    SentenceEmbeddingList transform(const SentenceList &sentences);
 
 };
 
