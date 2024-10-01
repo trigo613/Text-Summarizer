@@ -5,7 +5,7 @@
 #include "DocumentParser.h"
 
 
-std::unordered_set<std::string> DocumentParser::loadWordsWithPeriods(const std::string& file_path) {
+std::unordered_set<std::string> DocumentParser::loadWordsWithPeriods(const std::string &file_path) {
     std::unordered_set<std::string> words;
     std::ifstream file(file_path);
     std::string word;
@@ -16,16 +16,16 @@ std::unordered_set<std::string> DocumentParser::loadWordsWithPeriods(const std::
     return words;
 }
 
-std::string DocumentParser::removeWordsWithPeriods(const std::string& text) {
+std::string DocumentParser::removeWordsWithPeriods(const std::string &text) {
 
     std::unordered_set<std::string> words_with_periods = loadWordsWithPeriods("words_with_periods.txt");
     std::string result = text;
     // Replace each word with its period removed
-    for (const auto& word : words_with_periods) {
+    for (const auto &word: words_with_periods) {
         std::string word_without_period = word;
         word_without_period.erase(std::remove(word_without_period.begin(),
-                                                    word_without_period.end(), '.'),
-                                                word_without_period.end());
+                                              word_without_period.end(), '.'),
+                                  word_without_period.end());
         // Find and replace all occurrences in the result string
         size_t pos = 0;
         while ((pos = result.find(word, pos)) != std::string::npos) {
@@ -38,15 +38,23 @@ std::string DocumentParser::removeWordsWithPeriods(const std::string& text) {
     return std::regex_replace(result, pattern, "");
 }
 
-StringVector DocumentParser::splitToSentences (const std::string &document, bool clean_string) {
-       return splitString(document,'.',clean_string);
+StringVector DocumentParser::splitToSentences(const std::string &document, bool clean_string) {
+    StringVector result = splitString(document, '.', clean_string);
+    StringVector out;
+    out.reserve(result.size());
+    for (const auto &i: result) {
+        if (splitSentenceToWords(i, false).size() > MIN_WORDS_PER_SENTENCE) {
+            out.push_back(i);
+        }
+    }
+    return out;
 }
 
-StringVector DocumentParser::splitSentenceToWords(const std::string& sentence, bool clean_string) {
-    return splitString(sentence,' ', clean_string);
+StringVector DocumentParser::splitSentenceToWords(const std::string &sentence, bool clean_string) {
+    return splitString(sentence, ' ', clean_string);
 }
 
-StringVector DocumentParser::splitString(const std::string& s, char delim, bool clean_string) {
+StringVector DocumentParser::splitString(const std::string &s, char delim, bool clean_string) {
     std::vector<std::string> result;
     std::istringstream ss(s);
     std::string item;
@@ -64,23 +72,23 @@ StringVector DocumentParser::splitString(const std::string& s, char delim, bool 
 }
 
 
-SentenceList DocumentParser::splitSentencesToWords(const StringVector& document,bool clean_string) {
+SentenceList DocumentParser::splitSentencesToWords(const StringVector &document, bool clean_string) {
     StringVector clean_document = cleanDocument(document);
     SentenceList out;
     out.reserve(document.size());
-    for(const auto & i : document){
+    for (const auto &i: document) {
         out.push_back(splitSentenceToWords(i, clean_string));
     }
     return out;
 }
 
-void DocumentParser::keepAlphanumericOnly(std::string& s) {
+void DocumentParser::keepAlphanumericOnly(std::string &s) {
     s.erase(std::remove_if(s.begin(), s.end(), [](char c) {
         return !std::isalnum(c) && c != '.' && c != ' ';
     }), s.end());
 }
 
-void DocumentParser::replaceNumbersWithString(std::string& s) {
+void DocumentParser::replaceNumbersWithString(std::string &s) {
     std::string result;
     size_t length = s.length();
 
@@ -107,7 +115,7 @@ void DocumentParser::replaceNumbersWithString(std::string& s) {
 StringVector DocumentParser::cleanDocument(const StringVector &d) {
     StringVector out;
     out.reserve(d.size());
-    for(const auto & i : d){
+    for (const auto &i: d) {
         std::string temp = i;
         temp = removeNonStandardChars(temp);
         temp = replaceConsecutiveWhitespaces(temp);
@@ -122,7 +130,7 @@ std::string DocumentParser::removeNonStandardChars(const std::string &text) {
     return std::regex_replace(text, pattern, " ");
 }
 
-std::string DocumentParser::replaceConsecutiveWhitespaces(const std::string& text) {
+std::string DocumentParser::replaceConsecutiveWhitespaces(const std::string &text) {
     std::regex pattern(R"(\s+)");
     return std::regex_replace(text, pattern, " ");
 }

@@ -11,6 +11,7 @@
 #include "SparseVector.h"
 
 #define MIN_THRESHOLD 0.00001
+#define MIN_WORDS_PER_SENTENCE 4
 
 typedef std::vector<std::vector<double>> SimilarityMatrix;
 
