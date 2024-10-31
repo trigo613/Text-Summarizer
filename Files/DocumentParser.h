@@ -16,29 +16,21 @@
 #include <regex>
 
 namespace DocumentParser {
+    static const std::regex non_standard(R"([^a-zA-Z0-9\s])");
+    static const std::regex whitespace_sequence(R"(\s+)");
 
-     StringVector splitString(const std::string& s, char delim, bool clean_string = true);
+    vector<string> splitToSentences(const string &document);
 
-     StringVector splitSentenceToWords(const std::string& sentence, bool clean_string = true);
+    vector<string> splitStringByDelim(const string &s, char delim);
 
-     void keepAlphanumericOnly(std::string &s);
+    unordered_set<string> loadWordsWithPeriods();
 
-     void replaceNumbersWithString(std::string &s);
+    void replaceNumbersWithTokenInplace(string &text);
 
-     std::unordered_set<std::string> loadWordsWithPeriods(const std::string& file_path);
+    void removeWordsWithPeriodsInplace(string &text);
 
-     StringVector splitToSentences(const std::string& document, bool clean_string = true);
-
-     std::string removeWordsWithPeriods(const std::string &text);
-
-     StringVector cleanDocument(const StringVector &d);
-
-    std::string removeNonStandardChars(const std::string &text);
-
-    std::string replaceConsecutiveWhitespaces(const std::string &text);
-
-    SentenceList splitSentencesToWords(const StringVector& document, bool clean_string);
-};
+    void tokenizeSentenceInplace(vector<string> &sentence);
+}
 
 
 #endif //TEXTSUMMARIZATION_DOCUMENTPARSER_H

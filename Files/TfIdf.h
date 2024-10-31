@@ -13,28 +13,28 @@
 class TfIdf {
 
 private:
-    WordFrequencyCounter word_freq_counter;
-    WordToInt word_to_index;
-    IntToWord index_to_word;
-    Idf idf;
+    map<string,vector<int>> word_freq_counter;
+    map<string,int> word_to_index;
+    map<int,string> index_to_word;
+    vector<double> idf;
     size_t num_sentences;
     size_t embedding_size;
 
-    SentenceEmbeddingList generateCountVectors(const SentenceList &sentences);
+    vector<SparseVector> generateCountVectors(const vector<vector<string>> &sentences) const;
 
-    void generateDocumentWordCountMap(const SentenceList &sentences);
+    void generateDocumentWordCountMap(const vector<vector<string>> &sentences);
 
     void generateWordToIndex();
 
-    SentenceEmbeddingList normalizeCountVectors(SentenceEmbeddingList &embedding_list);
+    vector<SparseVector> normalizeCountVectors(vector<SparseVector> &embedding_list) const;
 
     void generateIdf();
 
 public:
 
-    void fit(const SentenceList &sentences);
+    void fit(const vector<vector<string>> &sentences);
 
-    SentenceEmbeddingList transform(const SentenceList &sentences);
+    vector<SparseVector> transform(vector<vector<string>> &sentences) const;
 
 };
 

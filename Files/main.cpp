@@ -1,6 +1,4 @@
 #include <iostream>
-#include <algorithm>
-#include <numeric>
 #include <vector>
 #include <stdexcept>
 #include <cmath>
@@ -14,10 +12,14 @@
 #define NUM_SENTENCES_INDEX 3
 #define NUM_ARGUMENTS 4
 
-std::string readFromFile(const std::string &filePath) {
+string readFromFile(const string &filePath) {
     std::ifstream file(filePath);
-    std::string text;
-    std::string line;
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filePath << std::endl;
+        exit(1);
+    }
+    string text;
+    string line;
     while (std::getline(file, line)) {
         text += line + " ";
     }
@@ -25,8 +27,12 @@ std::string readFromFile(const std::string &filePath) {
     return text;
 }
 
-std::string writeToFile(const std::string &filePath, const std::string &text) {
+string writeToFile(const string &filePath, const string &text) {
     std::ofstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filePath << std::endl;
+        exit(1);
+    }
     file << text;
     file.close();
     return filePath;
@@ -55,30 +61,59 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    std::string inputFilePath = argv[INPUT_FILE_INDEX];
-    std::string outputFilePath = argv[OUTPUT_FILE_INDEX];
+    string inputFilePath = argv[INPUT_FILE_INDEX];
+    string outputFilePath = argv[OUTPUT_FILE_INDEX];
     int numSentences = std::stoi(argv[NUM_SENTENCES_INDEX]);
 
-    std::string text = readFromFile(inputFilePath);
+    // Read input file
 
-    text = DocumentParser::removeWordsWithPeriods(text);
+    std::cout << "Reading input file..." << std::endl;
 
-    StringVector sentences = DocumentParser::splitToSentences(text, false);
+    string text = readFromFile(inputFilePath);
 
-    SentenceList clean_sentence_list = DocumentParser::splitSentencesToWords(sentences, true);
+    DocumentParser::removeWordsWithPeriodsInplace(text);
 
-    std::cout << "Number of sentences: " << clean_sentence_list.size() << std::endl;
+    // Split text into sentences
+
+    vector<string> sentences = DocumentParser::splitToSentences(text);
+
+    std::cout << "Number of sentences: " << sentences.size() << std::endl;
+
+    std::cout << "Tokenizing sentences..." << std::endl;
+
+    // Tokenize sentences
+
+    vector<vector<string>> tokenized_sentences;
+
+    tokenized_sentences.reserve(sentences.size());
+
+    for (const auto &sentence: sentences) {
+        string s = sentence;
+        vector<string> words = DocumentParser::splitStringByDelim(s,' ');
+        DocumentParser::tokenizeSentenceInplace(words);
+        tokenized_sentences.push_back(words);
+    }
+
+    std::cout << "Generating embeddings..." << std::endl;
+
+    // Fit the TfIdf model
 
     TfIdf tfIdf = TfIdf();
 
-    tfIdf.fit(clean_sentence_list);
+    tfIdf.fit(tokenized_sentences);
 
-    SentenceEmbeddingList embeddings = tfIdf.transform(clean_sentence_list);
+    vector<SparseVector> embeddings = tfIdf.transform(tokenized_sentences);
 
-    SimilarityMatrix similarityMatrix = TextRank::generateSimilarityMatrix(embeddings);
+    std::cout << "Generating similarity matrix..." << std::endl;
+
+    // Generate similarity matrix
+
+    vector<vector<double>> similarityMatrix = TextRank::generateSimilarityMatrix(embeddings);
+
+    std::cout << "Running TextRank algorithm..." << std::endl;
 
     // Perform TextRank and get ranks
-    std::vector<int> ranks = TextRank::textRank(similarityMatrix, 100, 0.85);
+    vector<int> ranks = TextRank::textRank(similarityMatrix, 100, 0.85);
 
     // Output the top ranked sentences
     for (int i = 0; i < numSentences && i < ranks.size(); i++) {
@@ -86,7 +121,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Prepare summary to write to output file
-    std::string summary;
+    string summary;
     for (size_t i = 0; i < numSentences && i < ranks.size(); i++) {
         summary += sentences[ranks[i]] + "\n\n";
     }

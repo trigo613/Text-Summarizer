@@ -15,12 +15,12 @@
 
 namespace TextRank {
 
-    SimilarityMatrix generateSimilarityMatrix(const SentenceEmbeddingList &embeddings);
+    vector<vector<double>> generateSimilarityMatrix(vector<SparseVector> &embeddings);
 
-    std::vector<int> textRank(const SimilarityMatrix &similarityMatrix, int maxIter, double d);
+    vector<int> textRank(const vector<vector<double>> &similarityMatrix, int maxIter, double d);
 
-    double cosine_similarity(SparseVector a, SparseVector b);
-};
+    double cosine_similarity(SparseVector& a, SparseVector& b);
+}
 
 
 #endif //TEXT_SUMMARIZER_TEXTRANK_H

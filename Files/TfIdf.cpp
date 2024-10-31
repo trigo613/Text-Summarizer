@@ -5,12 +5,12 @@
 
 #include "TfIdf.h"
 
-void TfIdf::generateDocumentWordCountMap(const SentenceList &sentences) {
+void TfIdf::generateDocumentWordCountMap(const vector<vector<string>> &sentences) {
     for (int i = 0; i < sentences.size(); i++) {
-        StringVector sentence = sentences[i];
+        vector<string> sentence = sentences[i];
         for (const auto &word: sentence) {
             if (word_freq_counter.find(word) == word_freq_counter.end()) {
-                word_freq_counter.insert({word, std::vector<int>(sentences.size(), 0)});
+                word_freq_counter.insert({word, vector<int>(sentences.size(), 0)});
                 word_freq_counter[word][i] = 1;
             } else {
                 word_freq_counter[word][i] += 1;
@@ -21,7 +21,7 @@ void TfIdf::generateDocumentWordCountMap(const SentenceList &sentences) {
 
 
 void TfIdf::generateIdf() {
-    idf = Idf(embedding_size, 0);
+    idf = vector<double>(embedding_size, 0);
     int count = 0;
     for (auto pair: word_freq_counter) {
         for (int i = 0; i < num_sentences; i++) {
@@ -29,7 +29,7 @@ void TfIdf::generateIdf() {
                 idf[count] += 1;
             }
         }
-        idf[count] = log((double) num_sentences + 1/ idf[count] + 1);
+        idf[count] = log((double)(num_sentences + 1) / (idf[count] + 1));
         count++;
     }
 }
@@ -41,52 +41,60 @@ void TfIdf::generateWordToIndex() {
     }
 }
 
-SentenceEmbeddingList TfIdf::generateCountVectors(const SentenceList &sentences) {
+vector<SparseVector> TfIdf::generateCountVectors(const vector<vector<string>> &sentences) const{
     size_t embeddingSize = word_to_index.size();
-    SentenceEmbeddingList embeddings(sentences.size(), SentenceEmbedding((int)embeddingSize, 0));
+    vector<SparseVector> embeddings(sentences.size(), SparseVector((int)embeddingSize, 0));
     for (int i = 0; i < sentences.size(); i++) {
         for (const auto &word: sentences[i]) {
-            const int word_index = word_to_index.at(word);
-            const int word_count = word_freq_counter.at(word)[i];
-            embeddings[i].insert(word_index, word_count);
+            int word_index = word_to_index.at(word);
+            int word_count = word_freq_counter.at(word)[i];
 
+            embeddings[i].insert(word_index, word_count);
         }
     }
     return embeddings;
 }
 
-SentenceEmbeddingList TfIdf::normalizeCountVectors(SentenceEmbeddingList &embedding_list) {
-    size_t embeddingSize = embedding_list[0].size();
-    for (auto &i: embedding_list) {
-        double sum = i.sum();
-        for (int j = 0; j < embeddingSize; j++) {
-            i.insert(j, i[j] / sum);
+
+
+vector<SparseVector> TfIdf::normalizeCountVectors(vector<SparseVector> &embedding_list) const {
+    vector<SparseVector> normalizedVectors;
+    for (int i = 0; i < embedding_list.size(); i++) {
+        double norm = embedding_list[i].norm();
+        SparseVector normalizedVector(embedding_list[i].size());
+        if (norm != 0) {
+            for (int j = 0; j < embedding_list[i].size(); j++) {
+                normalizedVector.insert(j, embedding_list[i][j] / norm);
+            }
         }
+        normalizedVectors.push_back(normalizedVector);
     }
-    return embedding_list;
+    return normalizedVectors;
 }
 
-void TfIdf::fit(const SentenceList &sentences) {
-    num_sentences = sentences.size();
+void TfIdf::fit(const vector<vector<string>> &sentences) {
+    this->num_sentences = sentences.size();
 
     generateDocumentWordCountMap(sentences);
 
     generateWordToIndex();
 
-    embedding_size = word_to_index.size();
+    this->embedding_size = word_to_index.size();
 
     generateIdf();
 
 }
 
-SentenceEmbeddingList TfIdf::transform(const SentenceList &sentences) {
-    SentenceEmbeddingList countVectors = generateCountVectors(sentences);
-    SentenceEmbeddingList normalized_embeddings = normalizeCountVectors(countVectors);
+vector<SparseVector> TfIdf::transform(vector<vector<string>> &sentences) const{
+    vector<SparseVector> countVectors = generateCountVectors(sentences);
+    vector<SparseVector> normalized_vectors = normalizeCountVectors(countVectors);
     for (int i = 0; i < sentences.size(); i++) {
         for (int j = 0; j < word_to_index.size(); j++) {
-            normalized_embeddings[i].insert(j, normalized_embeddings[i][j] * idf[j]);
+            normalized_vectors[i].insert(j, normalized_vectors[i][j] * idf[j]);
         }
     }
-    return normalized_embeddings;
+    return normalized_vectors;
 }
+
+
 
