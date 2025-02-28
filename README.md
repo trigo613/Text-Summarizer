@@ -8,7 +8,6 @@ For more details, refer to [Process.md](./Process.md) or the [original paper](ht
 Ensure you have the following installed:  
 - A C++ compiler supporting C++17 or later (`g++`, `clang++`, or MSVC)  
 - `CMake` (version 3.24 or later)  
-- `make` 
 
 ### Cloning the Repository  
 First, clone the repository and navigate to the project directory:  
