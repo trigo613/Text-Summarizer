@@ -8,7 +8,7 @@ For more details, refer to the [original paper](https://web.eecs.umich.edu/~miha
 Ensure you have the following installed:  
 - A C++ compiler supporting C++17 or later (`g++`, `clang++`, or MSVC)  
 - `CMake` (version 3.24 or later)  
-- `make` (if using Linux/macOS) 
+- `make` 
 
 ### Cloning the Repository  
 First, clone the repository and navigate to the project directory:  
