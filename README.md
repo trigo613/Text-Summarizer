@@ -44,6 +44,11 @@ Example:
 - `<output_file_path>`: Path to the output file where summarized sentences will be written
 - `<num_sentences>`: Number of top sentences to include in the summary
 
+## Links  
+- 📄 **[Results.md](./Results.md)** – See an example output of the algorithm after summarization.  
+- 📖 **[Process.md](./Process.md)** – Learn about the steps involved in the summarization process and the mathematical foundation behind it.  
+
+
 ## Acknowledgments
 
 - Original TextRank paper: "TextRank: Bringing Order into Texts" by Rada Mihalcea and Paul Tarau
