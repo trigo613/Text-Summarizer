@@ -11,8 +11,8 @@ add_executable(Text_Summarizer
         TfIdf.cpp
         TfIdf.h TextRank.h TextRank.cpp SparseVector.h SparseVector.cpp)
 
-# Set the output directory for the executable
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+# Set the output directory for the executable to be the root of the build directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/..)
 
 # Optional: If you're using specific compiler flags, keep this
 target_compile_options(Text_Summarizer PRIVATE -mavx -mfma)
