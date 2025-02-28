@@ -50,7 +50,7 @@ Let $V = \{w_1, w_2, \dots, w_n\}$ represent the vocabulary, where $w_i$ is the 
 For example, given the sentence "I eat an apple," the resulting word count vector might look like:
 
 $$
-v_S = [0, 0, \dots, 1, 0, 0, \dots, 1, 0, 0, 0]
+v_S = [0, 0, \dots, 1, 1, 0, 0, \dots, 1, 0, 1, 0]
 $$
 
 The SparseVector class efficiently stores this information by only recording the non-zero indices and their associated counts.
