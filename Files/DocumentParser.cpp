@@ -3,6 +3,7 @@
 //
 
 #include "DocumentParser.h"
+#include "Constants.h"
 
 #include <iostream>
 
@@ -23,29 +24,35 @@ unordered_set<string> DocumentParser::loadWordsWithPeriods() {
     return words;
 }
 
-void DocumentParser::removeWordsWithPeriodsInplace(string &text) {
+void DocumentParser::removeWordsWithPeriodsInplace(std::string &text) {
+    std::unordered_set<std::string> words_with_periods = loadWordsWithPeriods();
 
-    unordered_set<string> words_with_periods = loadWordsWithPeriods();
-    // Replace each word with its period removed
-    for (const auto &word: words_with_periods) {
-        string word_without_period = word;
-        word_without_period.erase(std::remove(word_without_period.begin(),
-                                              word_without_period.end(), '.'),
-                                  word_without_period.end());
-        // Find and replace all occurrences in the result string
-        size_t pos = 0;
-        while ((pos = text.find(word, pos)) != string::npos) {
-            text.replace(pos, word.length(), word_without_period);
-            pos += word_without_period.length();
+    std::ostringstream modifiedText;
+    std::istringstream inputStream(text);
+    std::string word;
+    bool firstWord = true;
+
+    while (inputStream >> word) {
+        if (word.find('.') != std::string::npos) {  // Check if the word contains a period
+            if (words_with_periods.find(word) != words_with_periods.end()) {
+                word.erase(std::remove(word.begin(), word.end(), '.'), word.end());
+            } else if (std::count(word.begin(), word.end(), '.') > 1) {
+                continue; // Skip words with multiple periods
+            }
         }
+
+        if (!firstWord) {
+            modifiedText << " ";
+        }
+        modifiedText << word;
+        firstWord = false;
     }
-    // Remove any words with two or more dots
-    std::regex pattern(R"(\b\w*\.\w*\.\w*\b)");
-    text = std::regex_replace(text, pattern, "");
+
+    text = modifiedText.str();
 }
 
 vector<string> DocumentParser::splitToSentences(const string &document) {
-    vector<string> result = splitStringByDelim(document, '.');
+    vector<string> result = splitStringByDelim(document, SENTENCE_DELIMETER);
     vector<string> out;
     out.reserve(result.size());
     for (const auto &i : result) {

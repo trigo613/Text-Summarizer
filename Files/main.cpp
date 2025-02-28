@@ -38,32 +38,27 @@ string writeToFile(const string &filePath, const string &text) {
     return filePath;
 }
 
-int validateArgs(int argc, char *argv[]) {
+
+int main(int argc, char *argv[]) {
+
     if (argc != NUM_ARGUMENTS) {
         std::cerr << "Usage: " << argv[0] << " <input_file> <output_file> <number_of_sentences>" << std::endl;
         return 1;
     }
+
+    std::string inputFilePath = argv[INPUT_FILE_INDEX];
+    std::string outputFilePath = argv[OUTPUT_FILE_INDEX];
+    int numSentences;
+
     try {
-        if (std::stoi(argv[NUM_SENTENCES_INDEX]) <= 0) {
+        numSentences = std::stoi(argv[NUM_SENTENCES_INDEX]);
+        if (numSentences <= 0) {
             throw std::invalid_argument("Number of sentences must be positive.");
         }
     } catch (const std::invalid_argument &) {
-        std::cerr << "Error: The number of sentences must be a valid integer." << std::endl;
+        std::cerr << "Error: The number of sentences must be a valid positive integer." << std::endl;
         return 1;
     }
-    return 0;
-}
-
-
-int main(int argc, char *argv[]) {
-
-    if(validateArgs(argc, argv) != 0) {
-        return 1;
-    }
-
-    string inputFilePath = argv[INPUT_FILE_INDEX];
-    string outputFilePath = argv[OUTPUT_FILE_INDEX];
-    int numSentences = std::stoi(argv[NUM_SENTENCES_INDEX]);
 
     // Read input file
 
@@ -108,12 +103,15 @@ int main(int argc, char *argv[]) {
 
     // Generate similarity matrix
 
-    vector<vector<double>> similarityMatrix = TextRank::generateSimilarityMatrix(embeddings);
+    //vector<vector<double>> similarityMatrix = TextRank::generateSimilarityMatrix(embeddings);
+    vector<vector<double>> similarityMatrix = TextRank::generateSimilarityMatrixMultiThreading(embeddings);
 
     std::cout << "Running TextRank algorithm..." << std::endl;
 
     // Perform TextRank and get ranks
-    vector<int> ranks = TextRank::textRank(similarityMatrix, 100, 0.85);
+
+    //vector<int> ranks = TextRank::textRank(similarityMatrix, 100, 0.85);
+    vector<int> ranks = TextRank::textRankMultiThreading(similarityMatrix, 100, 0.85);
 
     // Output the top ranked sentences
     for (int i = 0; i < numSentences && i < ranks.size(); i++) {

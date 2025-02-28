@@ -15,6 +15,7 @@ using namespace std;
 
 #define MIN_THRESHOLD 0.00001
 #define MIN_WORDS_PER_SENTENCE 5
+#define SENTENCE_DELIMETER '.'
 
 
 #endif //TEXTSUMMARIZATION_CONSTANTS_H

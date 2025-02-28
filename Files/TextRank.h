@@ -20,6 +20,10 @@ namespace TextRank {
     vector<int> textRank(const vector<vector<double>> &similarityMatrix, int maxIter, double d);
 
     double cosine_similarity(SparseVector& a, SparseVector& b);
+
+    vector<vector<double>> generateSimilarityMatrixMultiThreading(vector<SparseVector> &embeddings);
+
+    vector<int> textRankMultiThreading(const vector<vector<double>> &similarityMatrix, int maxIter, double d);
 }
 
 
