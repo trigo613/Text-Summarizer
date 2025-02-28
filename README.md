@@ -23,8 +23,8 @@ To build the project using `CMake`, follow these steps:
 ```bash
 mkdir build
 cd build
-cmake ..
-make        
+cmake .
+cmake --build .    
 ```
 This will generate the `Text_Summarizer` executable inside the `build/` directory.  
 ## Usage
