@@ -45,8 +45,8 @@ Example:
 - `<num_sentences>`: Number of top sentences to include in the summary
 
 ## Links  
-- 📄 **[Results.md](./Results.md)** – See an example output of the algorithm after summarization.  
-- 📖 **[Process.md](./Process.md)** – Learn about the steps involved in the summarization process and the mathematical foundation behind it.  
+- **[Results.md](./Results.md)** – See an example output of the algorithm after summarization.  
+- **[Process.md](./Process.md)** – Learn about the steps involved in the summarization process and the mathematical foundation behind it.  
 
 
 ## Acknowledgments
