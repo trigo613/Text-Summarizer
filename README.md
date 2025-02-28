@@ -116,6 +116,7 @@ $$
 
 The algorithm iterates this process until the scores converge (i.e., the changes in scores become very small) or a maximum number of iterations is reached. Finally, the sentences are ranked based on their converged scores.   
 **This process is highly parallelizable and is implemented using multi-threading.**
+<img src="https://github.com/user-attachments/assets/a5c4bb13-a492-436e-960c-afb3133b95d9" width="800"/>
 
 ### 10) Write to the output file the N sentences with the highest score
 
