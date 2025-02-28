@@ -25,7 +25,7 @@ cd build
 cmake .
 cmake --build .    
 ```
-This will generate the `Text_Summarizer` executable inside the `build/` directory.  
+This will generate the `Text_Summarizer` executable.  
 ## Usage
 
 Run the executable with the following command-line arguments:
