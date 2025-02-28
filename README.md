@@ -34,14 +34,14 @@ Run the executable with the following command-line arguments:
 ./Text_Summarizer <input_file_path> <output_file_path> <num_sentences>
 ```
 
+- `<input_file_path>`: Path to the input text file
+- `<output_file_path>`: Path to the output file where summarized sentences will be written
+- `<num_sentences>`: Number of top sentences to include in the summary
+  
 Example:
 ```
 ./Text_Summarizer Text.txt TextSummary.txt 5
 ```
-
-- `<input_file_path>`: Path to the input text file
-- `<output_file_path>`: Path to the output file where summarized sentences will be written
-- `<num_sentences>`: Number of top sentences to include in the summary
 
 ## Links  
 - **[Results.md](./Results.md)** – See an example output of the algorithm after summarization.  
