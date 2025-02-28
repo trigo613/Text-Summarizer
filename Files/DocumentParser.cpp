@@ -4,12 +4,12 @@
 
 #include "DocumentParser.h"
 #include "Constants.h"
-
+#include <sstream>
 #include <iostream>
 
 unordered_set<string> DocumentParser::loadWordsWithPeriods() {
     unordered_set<string> words;
-    string file_path = "../words_with_periods.txt";
+    string file_path = "./words_with_periods.txt";
     std::ifstream file(file_path);
     if (!file.is_open()) {
         std::cerr << "Error opening file: " << file_path << std::endl;
