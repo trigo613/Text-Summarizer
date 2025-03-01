@@ -31,12 +31,13 @@ This will generate the `Text_Summarizer` executable.
 Run the executable with the following command-line arguments:
 
 ```
-./Text_Summarizer <input_file_path> <output_file_path> <num_sentences>
+./Text_Summarizer <input_file_path> <output_file_path> <num_sentences> [num_threads]
 ```
 
 - `<input_file_path>`: Path to the input text file
 - `<output_file_path>`: Path to the output file where summarized sentences will be written
 - `<num_sentences>`: Number of top sentences to include in the summary
+- `[num_threads]` : Number of threads to use, 1 by default. (-1 to use hardware_concurrency)
   
 Example:
 ```
