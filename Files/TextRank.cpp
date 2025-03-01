@@ -8,7 +8,7 @@
 #include <cmath>
 #include <atomic>
 
-double TextRank::cosine_similarity(SparseVector& a,SparseVector& b) {
+double TextRank::cosine_similarity(SparseVector &a, SparseVector &b) {
     return dot(a, b) / (a.norm() * b.norm());
 }
 
@@ -76,7 +76,8 @@ vector<int> TextRank::textRank(const vector<vector<double>> &similarityMatrix, i
 }
 
 
-vector<vector<double>> TextRank::generateSimilarityMatrixMultiThreading(vector<SparseVector> &embeddings) {
+vector<vector<double>>
+TextRank::generateSimilarityMatrixMultiThreading(vector<SparseVector> &embeddings, int num_threads) {
     size_t N = embeddings.size();
     vector<vector<double>> similarityMatrix(N, vector<double>(N, 0.0));
 
@@ -85,9 +86,11 @@ vector<vector<double>> TextRank::generateSimilarityMatrixMultiThreading(vector<S
         similarityMatrix[i][i] = 1.0;
     }
 
-    // Determine number of threads (use hardware concurrency or fallback to 1)
-    unsigned int num_threads = std::thread::hardware_concurrency()/2;
-    num_threads = (num_threads > 0) ? num_threads : 1;
+    // Determine number of threads, if -1 then use hardware concurrency else use the provided value
+    if (num_threads == -1) {
+        num_threads = std::thread::hardware_concurrency();
+        num_threads = (num_threads > 0) ? num_threads : 1;
+    }
 
     // Function to process a chunk of the matrix
     auto process_chunk = [&](size_t start_i, size_t end_i) {
@@ -111,7 +114,7 @@ vector<vector<double>> TextRank::generateSimilarityMatrixMultiThreading(vector<S
     }
 
     // Join all threads
-    for (auto& thread : threads) {
+    for (auto &thread: threads) {
         thread.join();
     }
 
@@ -119,7 +122,7 @@ vector<vector<double>> TextRank::generateSimilarityMatrixMultiThreading(vector<S
 }
 
 
-vector<int> TextRank::textRankMultiThreading(const vector<vector<double>> &similarityMatrix, int maxIter, double d) {
+vector<int> TextRank::textRankMultiThreading(const vector<vector<double>> &similarityMatrix, int maxIter, double d, int num_threads) {
     size_t n = similarityMatrix.size();
     vector<double> scores(n, 1.0);
     vector<double> tempScores(n, 0.0);
@@ -130,9 +133,11 @@ vector<int> TextRank::textRankMultiThreading(const vector<vector<double>> &simil
         similaritySums[j] = std::accumulate(similarityMatrix[j].begin(), similarityMatrix[j].end(), 0.0);
     }
 
-    // Determine number of threads (use hardware concurrency or fallback to 1)
-    unsigned int num_threads = std::thread::hardware_concurrency()/2;
-    num_threads = (num_threads > 0) ? num_threads : 1;
+    // Determine number of threads, if -1 then use hardware concurrency else use the provided value
+    if (num_threads == -1) {
+        num_threads = std::thread::hardware_concurrency();
+        num_threads = (num_threads > 0) ? num_threads : 1;
+    }
 
     for (int iter = 0; iter < maxIter; ++iter) {
         std::atomic<bool> converged{true};
@@ -165,7 +170,7 @@ vector<int> TextRank::textRankMultiThreading(const vector<vector<double>> &simil
         }
 
         // Join all threads
-        for (auto& thread : threads) {
+        for (auto &thread: threads) {
             thread.join();
         }
 

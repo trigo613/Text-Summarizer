@@ -4,17 +4,36 @@
 
 #include "DocumentParser.h"
 #include "Constants.h"
-#include <sstream>
-#include <iostream>
 
+#include <iostream>
 unordered_set<string> DocumentParser::loadWordsWithPeriods() {
     unordered_set<string> words;
-    string file_path = "./words_with_periods.txt";
-    std::ifstream file(file_path);
-    if (!file.is_open()) {
-        std::cerr << "Error opening file: " << file_path << std::endl;
-        exit(1);
+    string filename = "words_with_periods.txt";
+    string current_path = "./";
+    string file_path;
+    bool file_found = false;
+    std::ifstream file;
+
+    // Try to find the file by going up in the directory hierarchy
+    while (!file_found) {
+        file_path = current_path + filename;
+        file.open(file_path);
+
+        if (file.is_open()) {
+            file_found = true;
+        } else {
+            // Move up one directory level
+            current_path += "../";
+
+            // Check if we've reached the root directory
+            // This is a simple check - if the path becomes too long, assume we've gone too far
+            if (current_path.length() > 100) {
+                std::cerr << "Error: Could not find file '" << filename << "' in any parent directory." << std::endl;
+                throw std::runtime_error("File not found: " + filename);
+            }
+        }
     }
+
     string word;
     // Read each word from the file and insert into the set
     while (std::getline(file, word)) {

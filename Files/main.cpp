@@ -10,7 +10,9 @@
 #define INPUT_FILE_INDEX 1
 #define OUTPUT_FILE_INDEX 2
 #define NUM_SENTENCES_INDEX 3
-#define NUM_ARGUMENTS 4
+#define NUM_THREADS_INDEX 4
+#define MIN_NUM_ARGUMENTS 4
+#define MAX_NUM_ARGUMENTS 5
 
 string readFromFile(const string &filePath) {
     std::ifstream file(filePath);
@@ -41,14 +43,15 @@ string writeToFile(const string &filePath, const string &text) {
 
 int main(int argc, char *argv[]) {
 
-    if (argc != NUM_ARGUMENTS) {
-        std::cerr << "Usage: " << argv[0] << " <input_file> <output_file> <number_of_sentences>" << std::endl;
+    if (argc < MIN_NUM_ARGUMENTS || argc > MAX_NUM_ARGUMENTS) {
+        std::cerr << "Usage: " << argv[0] << " <input_file> <output_file> <number_of_sentences> [num_threads]" << std::endl;
         return 1;
     }
 
     std::string inputFilePath = argv[INPUT_FILE_INDEX];
     std::string outputFilePath = argv[OUTPUT_FILE_INDEX];
     int numSentences;
+    int numThreads = 1;
 
     try {
         numSentences = std::stoi(argv[NUM_SENTENCES_INDEX]);
@@ -57,6 +60,17 @@ int main(int argc, char *argv[]) {
         }
     } catch (const std::invalid_argument &) {
         std::cerr << "Error: The number of sentences must be a valid positive integer." << std::endl;
+        return 1;
+    }
+    try {
+        if (argc == MAX_NUM_ARGUMENTS) {
+            numThreads = std::stoi(argv[NUM_THREADS_INDEX]);
+            if (numThreads <= 0) {
+                throw std::invalid_argument("Number of threads must be positive.");
+            }
+        }
+    } catch (const std::invalid_argument &) {
+        std::cerr << "Error: The number of threads must be a valid positive integer or -1 for hardware concurrency." << std::endl;
         return 1;
     }
 
@@ -104,14 +118,14 @@ int main(int argc, char *argv[]) {
     // Generate similarity matrix
 
     //vector<vector<double>> similarityMatrix = TextRank::generateSimilarityMatrix(embeddings);
-    vector<vector<double>> similarityMatrix = TextRank::generateSimilarityMatrixMultiThreading(embeddings);
+    vector<vector<double>> similarityMatrix = TextRank::generateSimilarityMatrixMultiThreading(embeddings, numThreads);
 
     std::cout << "Running TextRank algorithm..." << std::endl;
 
     // Perform TextRank and get ranks
 
     //vector<int> ranks = TextRank::textRank(similarityMatrix, 100, 0.85);
-    vector<int> ranks = TextRank::textRankMultiThreading(similarityMatrix, 100, 0.85);
+    vector<int> ranks = TextRank::textRankMultiThreading(similarityMatrix, 100, 0.85, numThreads);
 
     // Output the top ranked sentences
     for (int i = 0; i < numSentences && i < ranks.size(); i++) {
