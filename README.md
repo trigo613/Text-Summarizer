@@ -35,7 +35,7 @@ Run the executable with the following command-line arguments:
 ```
 
 - `<input_file_path>`: Path to the input text file
-- `<output_file_path>`: Path to the output file where summarized document will be written
+- `<output_file_path>`: Path to the output file where the summarized document will be written
 - `<num_sentences>`: Number of top sentences to include in the summary
 - `[num_threads]` : Number of threads to use, 1 by default. (-1 to use hardware_concurrency)
   
